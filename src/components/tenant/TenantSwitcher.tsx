@@ -12,7 +12,7 @@ const TenantSwitcher = () => {
 
   const handleTenantChange = (tenantSlug: string) => {
     selectTenant(tenantSlug);
-    navigate(`/tenant/${tenantSlug}/dashboard`);
+    navigate(`/${tenantSlug}/dashboard`);
   };
 
   if (loading) {

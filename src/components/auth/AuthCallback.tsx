@@ -68,7 +68,7 @@ const AuthCallback = () => {
             } else {
               // User has tenants, redirect to the first tenant's dashboard
               const firstTenant = tenants[0].tenant;
-              navigate(`/tenant/${firstTenant.slug}/dashboard`, {
+              navigate(`/${firstTenant.slug}/dashboard`, {
                 state: { authResponse },
                 replace: true,
               });

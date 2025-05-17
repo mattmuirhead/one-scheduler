@@ -90,7 +90,7 @@ function App() {
                   <MainLayout>
                     <Routes>
                       <Route path="dashboard" element={<Dashboard />} />
-                      <Route index element={<Navigate to="dashboard" replace />} />
+                      {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
                     </Routes>
                   </MainLayout>
                 </PrivateRoute>

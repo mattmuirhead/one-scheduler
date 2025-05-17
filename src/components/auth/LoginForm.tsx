@@ -50,7 +50,7 @@ const LoginForm = () => {
         } else {
           // Has tenants, redirect to first tenant's dashboard
           const firstTenant = tenants[0].tenant;
-          navigate(`/tenant/${firstTenant.slug}/dashboard`, { 
+          navigate(`/${firstTenant.slug}/dashboard`, { 
             state: { authResponse: response }
           });
         }

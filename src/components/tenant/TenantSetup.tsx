@@ -167,7 +167,7 @@ const TenantSetup = () => {
       setTimeout(() => {
         const newTenant = userTenants[0]?.tenant;
         if (newTenant) {
-          navigate(`/tenant/${newTenant.slug}/dashboard`);
+          navigate(`/${newTenant.slug}/dashboard`);
         }
       }, REDIRECT_DELAY);
     } catch (err) {
@@ -211,7 +211,7 @@ const TenantSetup = () => {
       setTimeout(() => {
         const newTenant = userTenants[0]?.tenant;
         if (newTenant) {
-          navigate(`/tenant/${newTenant.slug}/dashboard`);
+          navigate(`/${newTenant.slug}/dashboard`);
         }
       }, REDIRECT_DELAY);
     } catch (err) {

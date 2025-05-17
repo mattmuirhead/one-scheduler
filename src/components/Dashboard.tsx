@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { Layout, Typography, Space, Card, Avatar, Spin, message } from 'antd';
+import { Layout, Typography, Space, Card, Avatar, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { getCurrentUser } from '../lib/supabase';
 import { useTenant } from '../contexts/TenantContext';
@@ -12,8 +11,7 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
-  const { tenantSlug } = useParams()
-  const { currentTenant, userRole, loading: tenantLoading, error: tenantError } = useTenant();
+  const { currentTenant, userRole, loading: tenantLoading } = useTenant();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,20 +39,6 @@ const Dashboard = () => {
         </div>
       </div>
     );
-  }
-
-  // Handle tenant mismatch or errors
-  if (!currentTenant && !tenantLoading) {
-    return <Navigate to="/tenant/setup" replace />;
-  }
-
-  if (!tenantSlug && currentTenant && !tenantLoading) {
-    return <Navigate to={`/${currentTenant.slug}/dashboard`} replace />;
-  }
-
-  if (tenantError) {
-    message.error(tenantError);
-    return <Navigate to="/tenant/setup" replace />;
   }
 
   return (
