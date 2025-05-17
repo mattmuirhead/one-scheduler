@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout, Typography, Space, Card, Avatar, Spin } from 'antd';
+import { Typography, Space, Avatar, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { getCurrentUser } from '../lib/supabase';
 import { useTenant } from '../contexts/TenantContext';
@@ -7,7 +7,6 @@ import type { User } from '../types/auth';
 import styles from './Dashboard.module.scss';
 import commonStyles from '../styles/common.module.scss';
 
-const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
@@ -42,34 +41,28 @@ const Dashboard = () => {
   }
 
   return (
-    <Layout className={commonStyles.pageContainer}>
-      <Content className={styles.content}>
-        <Card>
-          <Space direction="vertical" size="large" className={styles.spaceContainer}>
-            <div className={styles.welcomeSection}>
-              <Avatar size={64} icon={<UserOutlined />} className={styles.avatar} />
-              <Title level={2} className={styles.welcomeTitle}>
-                Welcome to {currentTenant?.name}
-              </Title>
-              <Text className={styles.userEmail}>You're signed in as: {user?.email}</Text>
-              <Text className={styles.roleInfo}>Role: {userRole}</Text>
-            </div>
+    <Space direction="vertical" size="large" className={styles.spaceContainer}>
+      <div className={styles.welcomeSection}>
+        <Avatar size={64} icon={<UserOutlined />} className={styles.avatar} />
+        <Title level={2} className={styles.welcomeTitle}>
+          Welcome to {currentTenant?.name}
+        </Title>
+        <Text className={styles.userEmail}>You're signed in as: {user?.email}</Text>
+        <Text className={styles.roleInfo}>Role: {userRole}</Text>
+      </div>
 
-            <div className={styles.gettingStarted}>
-              <Title level={4}>Getting Started</Title>
-              <Text>This is your school scheduling dashboard. From here, you'll be able to:</Text>
-              <ul className={styles.featureList}>
-                <li>Upload information about students, teachers, and rooms</li>
-                <li>Define lessons and subjects</li>
-                <li>Generate optimized class schedules</li>
-                <li>Manage school resources efficiently</li>
-              </ul>
-              <Text>The complete functionality is still under development.</Text>
-            </div>
-          </Space>
-        </Card>
-      </Content>
-    </Layout>
+      <div className={styles.gettingStarted}>
+        <Title level={4}>Getting Started</Title>
+        <Text>This is your school scheduling dashboard. From here, you'll be able to:</Text>
+        <ul className={styles.featureList}>
+          <li>Upload information about students, teachers, and rooms</li>
+          <li>Define lessons and subjects</li>
+          <li>Generate optimized class schedules</li>
+          <li>Manage school resources efficiently</li>
+        </ul>
+        <Text>The complete functionality is still under development.</Text>
+      </div>
+    </Space>
   );
 };
 

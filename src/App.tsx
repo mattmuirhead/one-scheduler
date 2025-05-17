@@ -68,7 +68,7 @@ function App() {
         },
       }}
     >
-      <AntApp>
+      <AntApp className={styles.mainLayout}>
         <TenantProvider>
           <Router>
             <Routes>
