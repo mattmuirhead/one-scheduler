@@ -7,8 +7,10 @@ import { ConfigProvider, theme, App as AntApp, Layout, Spin, Typography } from '
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import AuthCallback from './components/auth/AuthCallback';
+import TenantSetup from './components/tenant/TenantSetup';
 import Dashboard from './components/Dashboard';
 import PrivateRoute from './routes/PrivateRoute';
+import { TenantProvider } from './contexts/TenantContext';
 import { getCurrentUser } from './lib/supabase';
 import type { User } from './types/auth';
 import './App.css';
@@ -66,27 +68,34 @@ function App() {
       }}
     >
       <AntApp>
-        <Router>
-          <Layout className={styles.mainLayout}>
-            <Layout.Content>
-              <Routes>
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/register" element={<RegisterForm />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route
-                  path="/dashboard"
-                  element={
+        <TenantProvider>
+          <Router>
+            <Layout className={styles.mainLayout}>
+              <Layout.Content>
+                <Routes>
+                  <Route path="/login" element={<LoginForm />} />
+                  <Route path="/register" element={<RegisterForm />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="/tenant/setup" element={
                     <PrivateRoute>
-                      <Dashboard />
+                      <TenantSetup />
                     </PrivateRoute>
-                  }
-                />
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </Layout.Content>
-          </Layout>
-        </Router>
+                  } />
+                  <Route
+                    path="/:tenantSlug?/dashboard"
+                    element={
+                      <PrivateRoute>
+                        <Dashboard />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </Layout.Content>
+            </Layout>
+          </Router>
+        </TenantProvider>
       </AntApp>
     </ConfigProvider>
   );

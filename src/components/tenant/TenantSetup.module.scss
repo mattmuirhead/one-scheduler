@@ -1,0 +1,125 @@
+@import '../../styles/common.module.scss';
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: $spacing-lg;
+  background-color: $background-color;
+  transition: background-color 0.3s ease;
+  
+  @media (max-width: 576px) {
+    padding: $spacing-md;
+  }
+}
+
+.setupCard {
+  width: 100%;
+  max-width: 600px;
+  box-shadow: $card-shadow;
+  border-radius: $border-radius;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  @media (max-width: 576px) {
+    margin: $spacing-md 0;
+  }
+}
+
+.title {
+  text-align: center;
+  margin-bottom: $spacing-md !important;
+  
+  :global(.anticon) {
+    margin-right: $spacing-sm;
+    color: $primary-color;
+  }
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  color: rgba(0, 0, 0, 0.65);
+  display: block;
+}
+
+.tabs {
+  margin-top: $spacing-md;
+
+  :global {
+    .ant-tabs-nav::before {
+      border-bottom-color: rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
+.submitButton {
+  margin-top: $spacing-lg;
+  height: 40px;
+  font-weight: 500;
+  
+  &:global(.ant-btn-loading) {
+    pointer-events: none;
+  }
+}
+
+.info {
+  margin-top: $spacing-md;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.45);
+  display: block;
+  text-align: center;
+  font-size: 13px;
+}
+
+// Form feedback animations
+:global {
+  .ant-form-item-explain-error {
+    animation: slideIn 0.2s ease-out;
+  }
+  
+  .ant-form-item-has-error .ant-input,
+  .ant-form-item-has-error .ant-input-affix-wrapper {
+    animation: shake 0.2s ease-in-out;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.fadeEnter {
+  opacity: 0;
+}
+
+.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExitActive {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
