@@ -32,14 +32,14 @@ const RegisterForm = () => {
         const response: AuthResponse = {
           success: true,
           message:
-            'Registration successful! Please check your email for verification instructions.',
+            'Registration successful! You can now set up your school or join an existing one.',
         };
 
         setSuccess(true);
 
-        // Navigate to login after a short delay
+        // Navigate to tenant setup after a short delay
         setTimeout(() => {
-          navigate('/login', { state: { authResponse: response } });
+          navigate('/tenant/setup', { state: { authResponse: response } });
         }, 3000);
       } else {
         throw new Error('Registration succeeded but no user was returned');
@@ -105,7 +105,7 @@ const RegisterForm = () => {
         {success && (
           <Alert
             message="Registration Successful"
-            description="Your account has been created. Please check your email for verification instructions. Redirecting to login..."
+            description="Your account has been created. Please check your email for verification instructions. You'll now be taken to set up your school or join an existing one..."
             type="success"
             showIcon
             banner

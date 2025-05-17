@@ -1,0 +1,24 @@
+@import '../../styles/common.module.scss';
+
+.switcher {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.label {
+  color: rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+}
+
+.select {
+  min-width: 150px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px; // Match the height of the Select control
+  width: 120px;
+}

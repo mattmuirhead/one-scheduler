@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Input, Button, Typography, Card, Alert, Space, Divider } from 'antd';
 import { UserOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
-import { signIn, signInWithGoogle } from '../../lib/supabase';
+import { signIn, signInWithGoogle, getUserTenants } from '../../lib/supabase';
+import { useTenant } from '../../contexts/TenantContext';
 import type { LoginFormData, AuthResponse } from '../../types/auth';
 import styles from './Auth.module.scss';
 
@@ -10,6 +11,7 @@ const { Title, Text } = Typography;
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { refreshTenants } = useTenant();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,8 +34,26 @@ const LoginForm = () => {
           message: 'Login successful!',
         };
 
-        // Redirect to dashboard after successful login
-        navigate('/dashboard', { state: { authResponse: response } });
+        // Refresh tenants in context
+        await refreshTenants();
+
+        // Check user's tenants
+        const { tenants, error: tenantsError } = await getUserTenants(data.user.id);
+        
+        if (tenantsError) {
+          throw tenantsError;
+        }
+
+        if (tenants.length === 0) {
+          // No tenants, redirect to setup
+          navigate('/tenant/setup', { state: { authResponse: response } });
+        } else {
+          // Has tenants, redirect to first tenant's dashboard
+          const firstTenant = tenants[0].tenant;
+          navigate(`/tenant/${firstTenant.slug}/dashboard`, { 
+            state: { authResponse: response }
+          });
+        }
       } else {
         // This case shouldn't happen with Supabase but handling for completeness
         throw new Error('Login succeeded but no user was returned');

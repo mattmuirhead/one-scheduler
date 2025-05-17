@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Spin, Result, Typography } from 'antd';
-import { handleAuthCallback } from '../../lib/supabase';
+import { handleAuthCallback, getCurrentUser, getUserTenants } from '../../lib/supabase';
+import { useTenant } from '../../contexts/TenantContext';
 import type { AuthResponse } from '../../types/auth';
 import styles from './Auth.module.scss';
 import commonStyles from '../../styles/common.module.scss';
@@ -15,8 +16,10 @@ const { Text } = Typography;
  */
 const AuthCallback = () => {
   const navigate = useNavigate();
+  const { refreshTenants } = useTenant();
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(true);
+  const [statusMessage, setStatusMessage] = useState<string>('Completing authentication...');
 
   useEffect(() => {
     const processAuthCallback = async () => {
@@ -35,12 +38,41 @@ const AuthCallback = () => {
             message: 'Authentication successful!',
           };
 
-          // Redirect to dashboard after successful auth
+          setStatusMessage('Checking your account...');
+          
+          // Get current user
+          const user = await getCurrentUser();
+          if (!user) {
+            throw new Error('No user found after authentication');
+          }
+          
+          // Refresh tenants in context
+          await refreshTenants();
+          
+          // Check if the user has any existing tenants
+          setStatusMessage('Checking your schools...');
+          const { tenants, error: tenantsError } = await getUserTenants(user.id);
+          
+          if (tenantsError) {
+            throw tenantsError;
+          }
+
+          // Decide where to redirect based on tenant status
           setTimeout(() => {
-            navigate('/dashboard', {
-              state: { authResponse },
-              replace: true,
-            });
+            if (tenants.length === 0) {
+              // No tenants, redirect to tenant setup
+              navigate('/tenant/setup', {
+                state: { authResponse },
+                replace: true,
+              });
+            } else {
+              // User has tenants, redirect to the first tenant's dashboard
+              const firstTenant = tenants[0].tenant;
+              navigate(`/tenant/${firstTenant.slug}/dashboard`, {
+                state: { authResponse },
+                replace: true,
+              });
+            }
           }, 1000); // Short delay to show success state
         } else {
           throw new Error('No session found after authentication');
@@ -59,15 +91,15 @@ const AuthCallback = () => {
     };
 
     processAuthCallback();
-  }, [navigate]);
+  }, [navigate, refreshTenants]);
 
   if (isProcessing) {
     return (
       <Card className={styles.callbackContainer}>
         <div className={commonStyles.loadingContent}>
           <Spin size="large" />
-          <Text strong>Completing authentication...</Text>
-          <Text>Please wait while we complete your authentication...</Text>
+          <Text strong>{statusMessage}</Text>
+          <Text>Please wait while we complete this process...</Text>
         </div>
       </Card>
     );
@@ -93,7 +125,7 @@ const AuthCallback = () => {
     <Result
       status="success"
       title="Authentication Successful"
-      subTitle="You are being redirected to the dashboard..."
+      subTitle="You are being redirected..."
     />
   );
 };
