@@ -1,24 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, Navigate } from 'react-router-dom';
-import { Layout, Typography, Button, Space, Card, Avatar, Spin, message, Tag } from 'antd';
-import { 
-  LogoutOutlined, 
-  UserOutlined, 
-  ScheduleOutlined,
-  TeamOutlined 
-} from '@ant-design/icons';
-import { getCurrentUser, signOut } from '../lib/supabase';
+import { useParams, Navigate } from 'react-router-dom';
+import { Layout, Typography, Space, Card, Avatar, Spin, message } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import { getCurrentUser } from '../lib/supabase';
 import { useTenant } from '../contexts/TenantContext';
 import type { User } from '../types/auth';
 import styles from './Dashboard.module.scss';
 import commonStyles from '../styles/common.module.scss';
-import TenantSwitcher from './tenant/TenantSwitcher';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const { tenantSlug } = useParams()
   const { currentTenant, userRole, loading: tenantLoading, error: tenantError } = useTenant();
   const [user, setUser] = useState<User | null>(null);
@@ -38,17 +31,6 @@ const Dashboard = () => {
 
     fetchUser();
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      message.success('Successfully logged out');
-      navigate('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-      message.error('Failed to log out');
-    }
-  };
 
   if (loading || tenantLoading) {
     return (
@@ -77,31 +59,13 @@ const Dashboard = () => {
 
   return (
     <Layout className={commonStyles.pageContainer}>
-      <Header className={styles.header}>
-        <div className={styles.headerContent}>
-          <div className={styles.headerLeft}>
-            <div className={styles.titleSection}>
-              <Title level={3} className={styles.title}>
-                <ScheduleOutlined /> {currentTenant.name}
-              </Title>
-              <Tag color="blue" icon={<TeamOutlined />} className={styles.roleTag}>
-                {userRole}
-              </Tag>
-            </div>
-            <TenantSwitcher />
-          </div>
-          <Button type="link" icon={<LogoutOutlined />} onClick={handleLogout}>
-            Sign Out
-          </Button>
-        </div>
-      </Header>
       <Content className={styles.content}>
         <Card>
           <Space direction="vertical" size="large" className={styles.spaceContainer}>
             <div className={styles.welcomeSection}>
               <Avatar size={64} icon={<UserOutlined />} className={styles.avatar} />
               <Title level={2} className={styles.welcomeTitle}>
-                Welcome to {currentTenant.name}
+                Welcome to {currentTenant?.name}
               </Title>
               <Text className={styles.userEmail}>You're signed in as: {user?.email}</Text>
               <Text className={styles.roleInfo}>Role: {userRole}</Text>

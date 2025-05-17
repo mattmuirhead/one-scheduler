@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ConfigProvider, theme, App as AntApp, Layout, Spin, Typography } from 'antd';
+import { ConfigProvider, theme, App as AntApp, Spin, Typography } from 'antd';
 // Ant Design v5 doesn't require CSS imports as it uses CSS-in-JS
 // For custom styles, we still use our own CSS file
 
@@ -9,6 +9,7 @@ import RegisterForm from './components/auth/RegisterForm';
 import AuthCallback from './components/auth/AuthCallback';
 import TenantSetup from './components/tenant/TenantSetup';
 import Dashboard from './components/Dashboard';
+import MainLayout from './components/layout/MainLayout';
 import PrivateRoute from './routes/PrivateRoute';
 import { TenantProvider } from './contexts/TenantContext';
 import { getCurrentUser } from './lib/supabase';
@@ -70,30 +71,35 @@ function App() {
       <AntApp>
         <TenantProvider>
           <Router>
-            <Layout className={styles.mainLayout}>
-              <Layout.Content>
-                <Routes>
-                  <Route path="/login" element={<LoginForm />} />
-                  <Route path="/register" element={<RegisterForm />} />
-                  <Route path="/auth/callback" element={<AuthCallback />} />
-                  <Route path="/tenant/setup" element={
-                    <PrivateRoute>
-                      <TenantSetup />
-                    </PrivateRoute>
-                  } />
-                  <Route
-                    path="/:tenantSlug?/dashboard"
-                    element={
-                      <PrivateRoute>
-                        <Dashboard />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                </Routes>
-              </Layout.Content>
-            </Layout>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+
+              {/* Protected routes */}
+              <Route path="/tenant/setup" element={
+                <PrivateRoute>
+                  <TenantSetup />
+                </PrivateRoute>
+              } />
+              
+              {/* Tenant-specific routes with MainLayout */}
+              <Route path="/:tenantSlug?/*" element={
+                <PrivateRoute>
+                  <MainLayout>
+                    <Routes>
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route index element={<Navigate to="dashboard" replace />} />
+                    </Routes>
+                  </MainLayout>
+                </PrivateRoute>
+              } />
+
+              {/* Default routes */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
           </Router>
         </TenantProvider>
       </AntApp>

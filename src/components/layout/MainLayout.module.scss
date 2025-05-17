@@ -1,0 +1,98 @@
+@import '../../styles/common.module.scss';
+
+.layout {
+  min-height: 100vh;
+}
+
+.header {
+  padding: 0 $spacing-lg;
+  background: #001529;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.title {
+  margin: 0 !important;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  :global(.anticon) {
+    font-size: 24px;
+  }
+}
+
+.roleTag {
+  margin-left: $spacing-sm;
+}
+
+.menu {
+  flex: 1;
+  margin: 0 $spacing-xl;
+  border-bottom: none;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+
+  :global {
+    .ant-menu-item {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &-selected {
+        background-color: #1890ff !important;
+      }
+    }
+  }
+}
+
+.content {
+  padding: $spacing-lg;
+  background-color: $background-color;
+  margin-top: 64px; // Header height
+  min-height: calc(100vh - 64px);
+}
+
+// Add hover effect to logout button
+:global {
+  .ant-btn-link {
+    color: rgba(255, 255, 255, 0.65);
+
+    &:hover {
+      color: white !important;
+    }
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: $background-color;
+}
