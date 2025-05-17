@@ -4,8 +4,10 @@ import {
   HomeOutlined,
   LogoutOutlined,
   ScheduleOutlined,
-  BankOutlined,
   SettingOutlined,
+  TeamOutlined,
+  ReadOutlined,
+  MehOutlined,
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useTenant } from '../../contexts/TenantContext';
@@ -42,7 +44,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   }, []);
 
   // Get the current path for menu selection
-  const currentPath = location.pathname.split('/').pop() || 'dashboard';
+  const currentPath = location.pathname.replace(`/${currentTenant?.slug}/`, '') || 'dashboard';
 
   const handleLogout = async () => {
     try {
@@ -64,9 +66,49 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       label: <Link to={`/${currentTenant?.slug}/dashboard`}>Dashboard</Link>,
     },
     {
-      key: 'classrooms',
-      icon: <BankOutlined />,
-      label: <Link to={`/${currentTenant?.slug}/classrooms`}>Classrooms</Link>,
+      key: 'rooms',
+      icon: <ReadOutlined />,
+      label: <Link to={`/${currentTenant?.slug}/rooms`}>Rooms</Link>,
+      children: [
+        {
+          key: 'rooms/add',
+          label: <Link to={`/${currentTenant?.slug}/rooms/add`}>Add</Link>,
+        },
+        {
+          key: 'rooms/upload',
+          label: <Link to={`/${currentTenant?.slug}/rooms/upload`}>Upload</Link>,
+        },
+      ]
+    },
+    {
+      key: 'staff',
+      icon: <TeamOutlined />,
+      label: <Link to={`/${currentTenant?.slug}/staff`}>Staff</Link>,
+      children: [
+        {
+          key: 'staff/add',
+          label: <Link to={`/${currentTenant?.slug}/staff/add`}>Add</Link>,
+        },
+        {
+          key: 'staff/upload',
+          label: <Link to={`/${currentTenant?.slug}/staff/upload`}>Upload</Link>,
+        },
+      ]
+    },
+    {
+      key: 'students',
+      icon: <MehOutlined />,
+      label: <Link to={`/${currentTenant?.slug}/students`}>Students</Link>,
+      children: [
+        {
+          key: 'students/add',
+          label: <Link to={`/${currentTenant?.slug}/students/add`}>Add</Link>,
+        },
+        {
+          key: 'students/upload',
+          label: <Link to={`/${currentTenant?.slug}/students/upload`}>Upload</Link>,
+        },
+      ]
     },
     {
       key: 'settings',
@@ -74,8 +116,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       label: 'Settings',
       children: [
         {
-          key: 'logout',
-          icon: <LogoutOutlined />,
+          key: 'signout',
           label: <Link to="/" onClick={handleLogout}>Sign Out</Link>
         }
       ]
