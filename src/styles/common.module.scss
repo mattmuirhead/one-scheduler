@@ -1,0 +1,83 @@
+// Variables
+$primary-color: #1890ff;
+$background-color: #f0f2f5;
+$text-color: rgba(0, 0, 0, 0.85);
+$card-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$border-radius: 6px;
+
+// Layouts
+.pageContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentContainer {
+  flex: 1;
+  padding: $spacing-md;
+}
+
+// Flex utilities
+.flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// Loading states
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: $background-color;
+}
+
+.loadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+// Card styles
+.card {
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: $spacing-xl * 2;
+  box-shadow: $card-shadow;
+  border-radius: $border-radius;
+}
+
+.cardCentered {
+  text-align: center;
+  padding: $spacing-lg;
+}
+
+// Spacing
+.gap {
+  gap: $spacing-md;
+}
+
+.marginY {
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.marginTop {
+  margin-top: $spacing-md;
+}
+
+.padding {
+  padding: $spacing-md;
+}
