@@ -2,16 +2,14 @@ import { Layout, Menu, Typography, Spin, message, theme } from 'antd';
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   HomeOutlined,
-  LogoutOutlined,
   ScheduleOutlined,
   SettingOutlined,
   TeamOutlined,
   ReadOutlined,
   MehOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
 import { useTenant } from '../../contexts/TenantContext';
-import { signOut, getCurrentUser } from '../../lib/supabase';
+import { signOut } from '../../lib/supabase';
 import styles from './MainLayout.module.scss';
 import React from 'react';
 
@@ -27,21 +25,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams();
   const { currentTenant, loading: tenantLoading, error: tenantError } = useTenant();
-  const [user, setUser] = useState(null);
-
-  // Fetch current user
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-    
-    fetchUser();
-  }, []);
 
   // Get the current path for menu selection
   const currentPath = location.pathname.replace(`/${currentTenant?.slug}/`, '') || 'dashboard';
@@ -78,7 +61,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           key: 'rooms/upload',
           label: <Link to={`/${currentTenant?.slug}/rooms/upload`}>Upload</Link>,
         },
-      ]
+      ],
     },
     {
       key: 'staff',
@@ -93,7 +76,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           key: 'staff/upload',
           label: <Link to={`/${currentTenant?.slug}/staff/upload`}>Upload</Link>,
         },
-      ]
+      ],
     },
     {
       key: 'students',
@@ -108,7 +91,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           key: 'students/upload',
           label: <Link to={`/${currentTenant?.slug}/students/upload`}>Upload</Link>,
         },
-      ]
+      ],
     },
     {
       key: 'settings',
@@ -117,11 +100,15 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       children: [
         {
           key: 'signout',
-          label: <Link to="/" onClick={handleLogout}>Sign Out</Link>
-        }
-      ]
-    }
-  ]
+          label: (
+            <Link to="/" onClick={handleLogout}>
+              Sign Out
+            </Link>
+          ),
+        },
+      ],
+    },
+  ];
 
   // Add loading state when tenant isn't available
   if (!currentTenant) {
@@ -130,7 +117,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <Spin size="large" />
       </div>
     );
-  };
+  }
 
   // Handle tenant mismatch or errors
   if (!currentTenant && !tenantLoading) {
@@ -148,10 +135,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <Layout className={styles.layout}>
-      <Sider
-        breakpoint="lg"
-        collapsedWidth="0"
-      >
+      <Sider breakpoint="lg" collapsedWidth="0">
         <Title level={3} className={styles.title} style={{ color: colorBgContainer, padding: 24 }}>
           <ScheduleOutlined /> {currentTenant?.name}
         </Title>
@@ -176,4 +160,3 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 };
 
 export default MainLayout;
-

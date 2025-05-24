@@ -37,7 +37,7 @@ const TenantSwitcher = () => {
         className={styles.select}
         suffixIcon={<TeamOutlined />}
       >
-        {userTenants.map(ut => (
+        {userTenants.map((ut) => (
           <Select.Option key={ut.tenant.slug} value={ut.tenant.slug}>
             {ut.tenant.name}
           </Select.Option>

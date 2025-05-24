@@ -39,20 +39,20 @@ const AuthCallback = () => {
           };
 
           setStatusMessage('Checking your account...');
-          
+
           // Get current user
           const user = await getCurrentUser();
           if (!user) {
             throw new Error('No user found after authentication');
           }
-          
+
           // Refresh tenants in context
           await refreshTenants();
-          
+
           // Check if the user has any existing tenants
           setStatusMessage('Checking your schools...');
           const { tenants, error: tenantsError } = await getUserTenants(user.id);
-          
+
           if (tenantsError) {
             throw tenantsError;
           }

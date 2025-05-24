@@ -3,15 +3,15 @@ export enum UserRole {
   SUPER_ADMIN = 'super_admin',
   ADMIN = 'admin',
   TEACHER = 'teacher',
-  STAFF = 'staff'
+  STAFF = 'staff',
 }
 
 // Base tenant interface
 export interface Tenant {
   id: string;
   name: string;
-  slug: string;  // URL-friendly identifier for routing
-  code: string;  // Invite code for joining
+  slug: string; // URL-friendly identifier for routing
+  code: string; // Invite code for joining
   created_at: string;
   updated_at: string;
 }
@@ -97,4 +97,3 @@ export interface UserTenantResponse {
   updated_at: string;
   tenant: TenantResponse;
 }
-

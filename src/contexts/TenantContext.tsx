@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { supabase, getUserTenants } from '../lib/supabase';
 import { storage } from '../utils/storage';
 import type { Tenant, UserRole, UserTenant, TenantContextType } from '../types/tenant';
@@ -16,7 +17,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const { data } = await supabase.auth.getUser();
       if (!data.user) {
         setUserTenants([]);
@@ -30,26 +31,26 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
       if (tenantsError) throw tenantsError;
 
       setUserTenants(tenants);
-      
+
       // Check if there's a stored tenant preference
       const storedTenantSlug = storage.getCurrentTenant();
-      
+
       if (storedTenantSlug && tenants.length > 0) {
         // Find the tenant that matches the stored slug
-        const matchingTenant = tenants.find(t => t.tenant.slug === storedTenantSlug);
-        
+        const matchingTenant = tenants.find((t) => t.tenant.slug === storedTenantSlug);
+
         if (matchingTenant) {
           setCurrentTenant(matchingTenant.tenant);
           setUserRole(matchingTenant.role as UserRole);
           return;
         }
       }
-      
+
       // If no stored preference or it's invalid, use the first tenant if available
       if (tenants.length > 0) {
         setCurrentTenant(tenants[0].tenant);
         setUserRole(tenants[0].role as UserRole);
-        
+
         // Store this selection
         storage.setCurrentTenant(tenants[0].tenant.slug);
       }
@@ -63,7 +64,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
 
   // Function to set the current tenant with persistence
   const selectTenant = (tenantSlug: string) => {
-    const tenant = userTenants.find(t => t.tenant.slug === tenantSlug);
+    const tenant = userTenants.find((t) => t.tenant.slug === tenantSlug);
     if (tenant) {
       setCurrentTenant(tenant.tenant);
       setUserRole(tenant.role as UserRole);
@@ -83,7 +84,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const { data } = supabase.auth.onAuthStateChange(handleAuthChange);
-    
+
     return () => {
       data?.subscription.unsubscribe();
     };

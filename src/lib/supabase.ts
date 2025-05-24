@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Provider } from '@supabase/supabase-js';
 import type { AuthError, OAuthResponse, Session } from '@supabase/supabase-js';
-import type { 
-  UserTenant, 
-  CreateTenantParams, 
-  JoinTenantParams, 
+import type {
+  UserTenant,
+  CreateTenantParams,
+  JoinTenantParams,
   TenantWithRole,
 } from '../types/tenant';
 
@@ -117,17 +117,17 @@ export const handleAuthCallback = async (): Promise<{
 }> => {
   try {
     const { data, error } = await supabase.auth.getSession();
-    
+
     if (error) {
       throw error;
     }
-    
+
     return { session: data.session, error: null };
   } catch (error) {
     console.error('Error handling auth callback:', error);
-    return { 
-      session: null, 
-      error: error instanceof Error ? error : new Error('Unknown error during authentication')
+    return {
+      session: null,
+      error: error instanceof Error ? error : new Error('Unknown error during authentication'),
     };
   }
 };
@@ -138,15 +138,17 @@ export const slugify = (text: string): string => {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/\s+/g, '-') // Replace spaces with -
     .replace(/[^\w-]+/g, '') // Remove all non-word chars
-    .replace(/--+/g, '-')   // Replace multiple - with single -
-    .replace(/^-+/, '')       // Trim - from start of text
-    .replace(/-+$/, '');      // Trim - from end of text
+    .replace(/--+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, ''); // Trim - from end of text
 };
 
 // Check if a tenant name is already taken
-export const checkTenantNameAvailable = async (name: string): Promise<{
+export const checkTenantNameAvailable = async (
+  name: string
+): Promise<{
   available: boolean;
   error: Error | null;
 }> => {
@@ -157,67 +159,67 @@ export const checkTenantNameAvailable = async (name: string): Promise<{
       .select('id')
       .eq('slug', slug)
       .maybeSingle();
-    
+
     if (error) throw error;
-    
+
     // Name is available if no data was returned
     return {
       available: !data,
-      error: null
+      error: null,
     };
   } catch (err) {
     console.error('Error checking tenant name:', err);
     return {
       available: false,
-      error: handleDbError(err)
+      error: handleDbError(err),
     };
   }
 };
 
 // Create a new tenant and set the user as super admin
-export const createTenant = async ({ 
-  name, 
+export const createTenant = async ({
+  name,
   userId,
-  slug: providedSlug 
+  slug: providedSlug,
 }: CreateTenantParams): Promise<{
   tenant: TenantWithRole | null;
   error: Error | null;
 }> => {
   try {
     const slug = providedSlug || slugify(name);
-    
+
     // Check if name is available
     const { available, error: checkError } = await checkTenantNameAvailable(name);
     if (checkError) throw checkError;
     if (!available) {
       throw new Error(DB_ERRORS.NAME_TAKEN);
     }
-    
+
     // Call the create_tenant function we defined in SQL
     const { data, error } = await supabase.rpc('create_tenant', {
       tenant_name: name,
       user_id: userId,
-      tenant_slug: slug
+      tenant_slug: slug,
     });
-    
+
     if (error) {
       throw error;
     }
-    
+
     return { tenant: data as TenantWithRole, error: null };
   } catch (err) {
     console.error('Error creating tenant:', err);
-    return { 
-      tenant: null, 
-      error: handleDbError(err)
+    return {
+      tenant: null,
+      error: handleDbError(err),
     };
   }
 };
 
 // Join an existing tenant using an invite code
-export const joinTenant = async ({ 
-  inviteCode, 
-  userId 
+export const joinTenant = async ({
+  inviteCode,
+  userId,
 }: JoinTenantParams): Promise<{
   tenant: TenantWithRole | null;
   error: Error | null;
@@ -226,32 +228,35 @@ export const joinTenant = async ({
     // Call the join_tenant function we defined in SQL
     const { data, error } = await supabase.rpc('join_tenant', {
       invite_code: inviteCode.toUpperCase(),
-      user_id: userId
+      user_id: userId,
     });
-    
+
     if (error) {
       throw error;
     }
-    
+
     return { tenant: data as TenantWithRole, error: null };
   } catch (err) {
     console.error('Error joining tenant:', err);
-    return { 
-      tenant: null, 
-      error: handleDbError(err) 
+    return {
+      tenant: null,
+      error: handleDbError(err),
     };
   }
 };
 
 // Get all tenants the user is a member of
-export const getUserTenants = async (userId: string): Promise<{
+export const getUserTenants = async (
+  userId: string
+): Promise<{
   tenants: UserTenant[];
   error: Error | null;
 }> => {
   try {
     const { data, error } = await supabase
       .from('user_tenants')
-      .select(`
+      .select(
+        `
         id,
         user_id,
         tenant_id,
@@ -266,20 +271,21 @@ export const getUserTenants = async (userId: string): Promise<{
           created_at,
           updated_at
         )
-      `)
+      `
+      )
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) {
       throw error;
     }
-    
+
     return { tenants: (data || []) as UserTenant[], error: null };
   } catch (err) {
     console.error('Error fetching user tenants:', err);
-    return { 
-      tenants: [], 
-      error: handleDbError(err)
+    return {
+      tenants: [],
+      error: handleDbError(err),
     };
   }
 };

@@ -39,7 +39,7 @@ const LoginForm = () => {
 
         // Check user's tenants
         const { tenants, error: tenantsError } = await getUserTenants(data.user.id);
-        
+
         if (tenantsError) {
           throw tenantsError;
         }
@@ -50,8 +50,8 @@ const LoginForm = () => {
         } else {
           // Has tenants, redirect to first tenant's dashboard
           const firstTenant = tenants[0].tenant;
-          navigate(`/${firstTenant.slug}/dashboard`, { 
-            state: { authResponse: response }
+          navigate(`/${firstTenant.slug}/dashboard`, {
+            state: { authResponse: response },
           });
         }
       } else {

@@ -1,31 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Card, 
-  Form, 
-  Input, 
-  Button, 
-  Typography, 
-  Tabs, 
-  Space, 
-  Alert,
-  message,
-  Spin
-} from 'antd';
-import { 
-  PlusOutlined, 
-  TeamOutlined, 
-  LinkOutlined, 
+import { Card, Form, Input, Button, Typography, Tabs, Space, Alert, message, Spin } from 'antd';
+import {
+  PlusOutlined,
+  TeamOutlined,
+  LinkOutlined,
   BuildOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { createTenant, joinTenant, checkTenantNameAvailable, supabase } from '../../lib/supabase';
 import { useTenant } from '../../contexts/TenantContext';
-import type { 
-  CreateTenantFormData, 
-  JoinTenantFormData, 
-  TenantSetupOption 
+import type {
+  CreateTenantFormData,
+  JoinTenantFormData,
+  TenantSetupOption,
 } from '../../types/tenant';
 import styles from './TenantSetup.module.scss';
 
@@ -46,7 +35,7 @@ const TenantSetup = () => {
   const [joinForm] = Form.useForm();
   const [nameLength, setNameLength] = useState(0);
   const REDIRECT_DELAY = 5000; // 5 seconds
-  
+
   // Add error type constants
   const ERROR_MESSAGES = {
     NO_USER: 'You must be logged in to perform this action',
@@ -90,7 +79,7 @@ const TenantSetup = () => {
       navigate(`/${firstTenant.slug}/dashboard`);
     }
   }, [userTenants, navigate]);
-  
+
   // Add effect to handle auto-focus
   useEffect(() => {
     // Small delay to ensure the input is mounted
@@ -121,12 +110,12 @@ const TenantSetup = () => {
     }
   }, [success]);
 
-// Remove the form watcher effect - we'll use onValuesChange instead
+  // Remove the form watcher effect - we'll use onValuesChange instead
 
   const handleCreateTenant = async (values: CreateTenantFormData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const { data } = await supabase.auth.getUser();
       if (!data.user) throw new Error(ERROR_MESSAGES.NO_USER);
@@ -140,7 +129,7 @@ const TenantSetup = () => {
 
       const { tenant, error: createError } = await createTenant({
         name: values.name,
-        userId: data.user.id
+        userId: data.user.id,
       });
 
       if (createError) {
@@ -150,19 +139,19 @@ const TenantSetup = () => {
       if (!tenant) {
         throw new Error('Failed to create school');
       }
-      
+
       await refreshTenants(); // Move this before setting success state
 
       // Use a small delay to ensure smooth transition
       setTimeout(() => {
         setCreatedTenant({
           name: tenant.name,
-          code: tenant.code
+          code: tenant.code,
         });
         setSuccess(true);
         message.success('School created successfully!');
       }, 100);
-      
+
       // Add delayed redirect
       setTimeout(() => {
         const newTenant = userTenants[0]?.tenant;
@@ -181,14 +170,14 @@ const TenantSetup = () => {
   const handleJoinTenant = async (values: JoinTenantFormData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const { data } = await supabase.auth.getUser();
       if (!data.user) throw new Error(ERROR_MESSAGES.NO_USER);
 
       const { error: joinError } = await joinTenant({
         inviteCode: values.code.toUpperCase(), // Transform to uppercase
-        userId: data.user.id
+        userId: data.user.id,
       });
 
       if (joinError) {
@@ -206,7 +195,7 @@ const TenantSetup = () => {
         setSuccess(true);
         message.success('Joined school successfully!');
       }, 100);
-      
+
       // Add delayed redirect
       setTimeout(() => {
         const newTenant = userTenants[0]?.tenant;
@@ -238,8 +227,8 @@ const TenantSetup = () => {
             description={
               <Space direction="vertical">
                 <Text>{error}</Text>
-                <Button 
-                  size="small" 
+                <Button
+                  size="small"
                   onClick={() => {
                     setError(null);
                     if (activeTab === 'create') {
@@ -275,12 +264,14 @@ const TenantSetup = () => {
                     <Typography.Text copyable>{createdTenant.code}</Typography.Text>
                     <br />
                     <Text type="secondary" style={{ fontSize: '12px' }}>
-                      Share this invite code with other teachers and staff to let them join your school.
+                      Share this invite code with other teachers and staff to let them join your
+                      school.
                     </Text>
                   </div>
                 )}
                 <div style={{ marginTop: 8 }}>
-                  <Spin size="small" /> Redirecting to your dashboard in {countdown} {countdown === 1 ? 'second' : 'seconds'}...
+                  <Spin size="small" /> Redirecting to your dashboard in {countdown}{' '}
+                  {countdown === 1 ? 'second' : 'seconds'}...
                 </div>
               </div>
             }
@@ -313,9 +304,9 @@ const TenantSetup = () => {
                 </span>
               ),
               children: (
-                <Form 
+                <Form
                   form={createForm}
-                  layout="vertical" 
+                  layout="vertical"
                   onFinish={handleCreateTenant}
                   disabled={success || loading}
                   onValuesChange={(changedValues) => {
@@ -341,7 +332,7 @@ const TenantSetup = () => {
                           <li>Must be unique across all schools</li>
                         </ul>
                       ),
-                      icon: <InfoCircleOutlined />
+                      icon: <InfoCircleOutlined />,
                     }}
                     name="name"
                     rules={[
@@ -351,11 +342,15 @@ const TenantSetup = () => {
                       {
                         validator: async (_, value) => {
                           if (!value) return;
-                          
+
                           if (!/^[a-zA-Z0-9\s-]+$/.test(value)) {
-                            return Promise.reject(new Error('School name can only contain letters, numbers, spaces, and hyphens'));
+                            return Promise.reject(
+                              new Error(
+                                'School name can only contain letters, numbers, spaces, and hyphens'
+                              )
+                            );
                           }
-                          
+
                           setCheckingName(true);
                           return new Promise((resolve, reject) => {
                             debouncedCheckName(value, (error) => {
@@ -367,13 +362,13 @@ const TenantSetup = () => {
                               }
                             });
                           });
-                        }
-                      }
+                        },
+                      },
                     ]}
                     validateTrigger={['onBlur']}
                   >
-                    <Input 
-                      prefix={<TeamOutlined />} 
+                    <Input
+                      prefix={<TeamOutlined />}
                       placeholder="Enter school name"
                       disabled={loading}
                       suffix={checkingName ? <Spin size="small" /> : null}
@@ -398,7 +393,7 @@ const TenantSetup = () => {
                     Creating a new school will make you the super admin.
                   </Text>
                 </Form>
-              )
+              ),
             },
             {
               key: 'join',
@@ -408,9 +403,9 @@ const TenantSetup = () => {
                 </span>
               ),
               children: (
-                <Form 
+                <Form
                   form={joinForm}
-                  layout="vertical" 
+                  layout="vertical"
                   onFinish={handleJoinTenant}
                   disabled={success || loading}
                 >
@@ -418,16 +413,20 @@ const TenantSetup = () => {
                     label="Invite Code"
                     name="code"
                     tooltip={{
-                      title: 'The invite code should be 8 characters long, containing only uppercase letters and numbers',
-                      icon: <InfoCircleOutlined />
+                      title:
+                        'The invite code should be 8 characters long, containing only uppercase letters and numbers',
+                      icon: <InfoCircleOutlined />,
                     }}
                     rules={[
                       { required: true, message: 'Please enter the invite code' },
-                      { pattern: /^[A-Z0-9]{8}$/, message: 'Invite code must be 8 uppercase letters or numbers' }
+                      {
+                        pattern: /^[A-Z0-9]{8}$/,
+                        message: 'Invite code must be 8 uppercase letters or numbers',
+                      },
                     ]}
                   >
-                    <Input 
-                      placeholder="Enter invite code" 
+                    <Input
+                      placeholder="Enter invite code"
                       disabled={loading}
                       style={{ textTransform: 'uppercase' }}
                       maxLength={8}
@@ -450,8 +449,8 @@ const TenantSetup = () => {
                     Enter the invite code provided by your school administrator.
                   </Text>
                 </Form>
-              )
-            }
+              ),
+            },
           ]}
         />
       </Card>

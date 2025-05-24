@@ -78,23 +78,29 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallback />} />
 
               {/* Protected routes */}
-              <Route path="/tenant/setup" element={
-                <PrivateRoute>
-                  <TenantSetup />
-                </PrivateRoute>
-              } />
-              
+              <Route
+                path="/tenant/setup"
+                element={
+                  <PrivateRoute>
+                    <TenantSetup />
+                  </PrivateRoute>
+                }
+              />
+
               {/* Tenant-specific routes with MainLayout */}
-              <Route path="/:tenantSlug?/*" element={
-                <PrivateRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route path="dashboard" element={<Dashboard />} />
-                      {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
-                    </Routes>
-                  </MainLayout>
-                </PrivateRoute>
-              } />
+              <Route
+                path="/:tenantSlug?/*"
+                element={
+                  <PrivateRoute>
+                    <MainLayout>
+                      <Routes>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
+                      </Routes>
+                    </MainLayout>
+                  </PrivateRoute>
+                }
+              />
 
               {/* Default routes */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
